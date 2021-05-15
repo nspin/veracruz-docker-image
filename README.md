@@ -61,6 +61,11 @@ Note that building the Docker image will take a long time (we appreciate any sug
     make tz TEE=tz
     ```
 
+- ### Build Instructions for IceCap
+    ```
+    make icecap TEE=icecap
+    ```
+
 Once the image build process has finished, there should be a Docker container running called "veracruz". To verify that it's running, run: 
     ```
     docker ps
@@ -133,6 +138,25 @@ make trustzone-veracruz-test
 ```
 
 will execute both of these testsuites.  You, again, should see _7_ and _8_ tests executing and passing, respectively.
+
+## Test Instructions for TrustZone
+
+Once inside the container, execute the following to build, start, and enter a
+QEMU virtual machine running IceCap with the Veracruz test suites:
+
+```sh
+cd /work/veracruz/icecap
+make test-system
+./result/run
+```
+
+Inside the virtual machine's shell, execute the following to run the test
+suites:
+
+```sh
+run_test veracruz-server-test
+run_test veracruz-test
+```
 
 # Cleaning a build
 

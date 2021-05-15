@@ -38,8 +38,12 @@ else # otherwise linux
 endif
 
 .PHONY:
+icecap: build
+	docker run --privileged -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz --name  $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_icecap
+
+.PHONY:
 build: Dockerfile
-	DOCKER_BUILDKIT=1 docker build --squash --build-arg USER=$(USER) --build-arg UID=$(UID) --build-arg TEE=$(TEE) -t $(VERACRUZ_DOCKER_IMAGE)_$(TEE) -f $< .
+	DOCKER_BUILDKIT=1 docker build --build-arg USER=$(USER) --build-arg UID=$(UID) --build-arg TEE=$(TEE) -t $(VERACRUZ_DOCKER_IMAGE)_$(TEE) -f $< .
 
 .PHONY:
 ci: Dockerfile.ci

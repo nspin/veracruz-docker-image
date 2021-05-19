@@ -318,17 +318,8 @@ ENV DEBIAN_FRONTEND noninteractive
 SHELL ["/bin/bash", "-c"]
 
 USER root
-RUN apt-get update && apt-get install --no-install-recommends -y \
-    bc
+RUN apt-get update && apt-get install --no-install-recommends -y bc
 USER $USER
-
-USER root
-RUN install -d -m 0755 -o 1000 /nix
-USER $USER
-RUN curl -L https://raw.githubusercontent.com/nspin/minimally-invasive-nix-installer/dist/install.sh -o install-nix.sh \
-    && echo "9364f478d789ca590634699b9bece0e20929949054008948ab3334cb2a48bd2f install-nix.sh" | sha256sum -c - \
-    && bash install-nix.sh \
-    && rm install-nix.sh
 
 ENV PATH="/nix/env/bin:${PATH}"
 ENV MANPATH="/nix/env/share/man:${MANPATH}"
@@ -337,7 +328,5 @@ ENV NIX_SSL_CERT_FILE=/nix/env/etc/ssl/certs/ca-bundle.crt
 FROM build_${TEE} as final
 
 WORKDIR /work
-COPY --chown=$USER start_aesm.sh .
-# NOTE: The image used in CI should run start_aesm.sh in the gitlab-ci script.
-# Otherwise the gitlab runner may complaint.
-ENTRYPOINT ["bash", "start_aesm.sh"]
+COPY --chown=$USER icecap/entrypoint.sh .
+ENTRYPOINT ["bash", "entrypoint.sh"]

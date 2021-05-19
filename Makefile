@@ -6,6 +6,8 @@ UID := $(shell id -u)
 IP := $(firstword $(shell ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1' | awk '{print $1}' ))
 OS_NAME := $(shell uname -s | tr A-Z a-z)
 
+SLASH_NIX ?= ../icecap/slash-nix
+
 .PHONY:
 # Assume an linux machine with sgx enable
 run: build
@@ -13,7 +15,7 @@ ifndef IAS_TOKEN
 	$(error IAS_TOKEN is not defined)
 endif
 
-	docker run --privileged --cap-add=ALL -e IAS_TOKEN=${IAS_TOKEN} -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz --device /dev/isgx --device /dev/mei0 --name $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_sgx
+	docker run --privileged --cap-add=ALL -e IAS_TOKEN=${IAS_TOKEN} -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz -v $(abspath $(SLASH_NIX)):/nix --device /dev/isgx --device /dev/mei0 --name $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_sgx
 
 
 sgx: run
@@ -39,7 +41,7 @@ endif
 
 .PHONY:
 icecap: build
-	docker run --privileged -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz --name  $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_icecap
+	docker run --privileged -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz -v $(abspath $(SLASH_NIX)):/nix --name  $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_icecap
 
 .PHONY:
 build: Dockerfile

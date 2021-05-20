@@ -325,6 +325,10 @@ ENV PATH="/nix/env/bin:${PATH}"
 ENV MANPATH="/nix/env/share/man:${MANPATH}"
 ENV NIX_SSL_CERT_FILE=/nix/env/etc/ssl/certs/ca-bundle.crt
 
+# HACK for persistent git cache. $XDG_CACHE_HOME doesn't appear to be in use elsewhere.
+# TODO patch nix to use $NIX_CACHE_HACK instead
+ENV XDG_CACHE_HOME=/nix/cache
+
 FROM build_${TEE} as final
 
 WORKDIR /work

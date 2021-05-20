@@ -41,6 +41,7 @@ endif
 
 .PHONY:
 icecap: build
+	mkdir -p $(SLASH_NIX)
 	docker run --privileged -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz -v $(abspath $(SLASH_NIX)):/nix --name  $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_icecap
 
 .PHONY:

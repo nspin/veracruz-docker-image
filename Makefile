@@ -7,6 +7,11 @@ IP := $(firstword $(shell ip addr show | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-
 OS_NAME := $(shell uname -s | tr A-Z a-z)
 
 NIX_ROOT ?= ../icecap/nix-root
+ICECAP_ROOT ?= ../../icecap
+ICECAP_LOCAL ?= 0
+ifeq ($(ICECAP_LOCAL), 1)
+	ICECAP_MOUNT := -v $(abspath $(ICECAP_ROOT)):/work/icecap
+endif
 
 .PHONY:
 # Assume an linux machine with sgx enable
@@ -42,7 +47,11 @@ endif
 .PHONY:
 icecap: build
 	mkdir -p $(NIX_ROOT)
-	docker run --privileged -d -v $(abspath $(VERACRUZ_ROOT)):/work/veracruz -v $(abspath $(NIX_ROOT)):/nix --name $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_icecap
+	docker run --privileged -d \
+		-v $(abspath $(VERACRUZ_ROOT)):/work/veracruz \
+		$(ICECAP_MOUNT) \
+		-v $(abspath $(NIX_ROOT)):/nix \
+		--name $(VERACRUZ_CONTAINER) $(VERACRUZ_DOCKER_IMAGE)_icecap
 
 .PHONY:
 build: Dockerfile

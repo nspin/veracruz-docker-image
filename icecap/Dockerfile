@@ -43,6 +43,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     apt-get autoremove -y && apt-get clean; \
     rm -rf /tmp/* /var/tmp/*
 
+
 RUN groupadd -f -g $GID x && useradd -u $UID -g $GID -m -p x x
 USER x
 
